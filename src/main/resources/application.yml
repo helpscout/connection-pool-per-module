@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/helpscout
+    password: test
+    username: test
+    hikari:
+      connection-timeout: 20000
+      max-lifetime: 300000
+    instances:
+      - name: default_pool
+        pool-size: 10
+      - name: ecommerce_pool
+        pool-size: 10
+      - name: user_pool
+        pool-size: 10
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: db
