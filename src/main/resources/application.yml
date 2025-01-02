@@ -9,7 +9,7 @@ spring:
     instances:
       - name: default_pool
         pool-size: 10
-      - name: ecommerce_pool
+      - name: notification_pool
         pool-size: 10
       - name: user_pool
         pool-size: 10

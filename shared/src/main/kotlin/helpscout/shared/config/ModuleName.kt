@@ -2,7 +2,7 @@ package helpscout.shared.config
 
 enum class ModuleName {
     DEFAULT,
-    ECOMMERCE,
+    NOTIFICATION,
     USER;
 
     companion object {

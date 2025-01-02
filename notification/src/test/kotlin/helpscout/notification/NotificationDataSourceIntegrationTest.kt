@@ -1,8 +1,8 @@
-package helpscout.ecommerce
+package helpscout.notification
 
-import helpscout.ecommerce.EcommerceDataSourceIntegrationTest.TestController
+import helpscout.notification.NotificationDataSourceIntegrationTest.TestController
 import helpscout.shared.config.DataSourceContext
-import helpscout.shared.config.ModuleName.ECOMMERCE
+import helpscout.shared.config.ModuleName.NOTIFICATION
 import helpscout.shared.config.RoutingDataSourceTransactionInterceptors
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -38,7 +38,7 @@ import org.testcontainers.junit.jupiter.Testcontainers
 @EnableAspectJAutoProxy
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-class EcommerceDataSourceIntegrationTest {
+class NotificationDataSourceIntegrationTest {
 
     @Autowired
     private lateinit var mvc: MockMvc
@@ -57,17 +57,17 @@ class EcommerceDataSourceIntegrationTest {
     }
 
     @Test
-    fun `test list purchases endpoint`() {
-        mvc.perform(get("/test/purchases").contentType(APPLICATION_JSON))
+    fun `test list notifications endpoint`() {
+        mvc.perform(get("/test/notifications").contentType(APPLICATION_JSON))
             .andExpect(status().isOk())
     }
 
     @RestController
     @RequestMapping("/test")
     class TestController {
-        @GetMapping("/purchases")
-        fun listPurchases() {
-            assertThat(DataSourceContext.current).isEqualTo(ECOMMERCE)
+        @GetMapping("/notifications")
+        fun listNotifications() {
+            assertThat(DataSourceContext.current).isEqualTo(NOTIFICATION)
         }
     }
 }

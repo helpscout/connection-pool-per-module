@@ -33,7 +33,7 @@ subprojects {
 }
 
 dependencies {
-    implementation(project(":ecommerce"))
+    implementation(project(":notification"))
     implementation(project(":shared"))
 
     implementation("org.flywaydb:flyway-core")
