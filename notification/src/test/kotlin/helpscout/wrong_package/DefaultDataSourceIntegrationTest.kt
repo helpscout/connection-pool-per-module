@@ -67,7 +67,7 @@ class DefaultDataSourceIntegrationTest {
     @RequestMapping("/test")
     class TestController {
         @GetMapping("/default")
-        fun getConversations() {
+        fun getDefault() {
             assertThat(DataSourceContext.current).isEqualTo(DEFAULT)
         }
     }

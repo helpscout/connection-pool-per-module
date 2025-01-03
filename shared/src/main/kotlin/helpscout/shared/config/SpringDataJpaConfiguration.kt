@@ -50,7 +50,7 @@ class SpringDataJpaConfiguration {
     private fun createRoutingDataSource(targetDataSources: Map<ModuleName, DataSource>) =
         ModuleRoutingDataSource().apply {
             setTargetDataSources(targetDataSources.toMap())
-            setDefaultTargetDataSource(DEFAULT)
+            setDefaultTargetDataSource(targetDataSources[DEFAULT]!!)
         }
 }
 

@@ -34,6 +34,7 @@ subprojects {
 
 dependencies {
     implementation(project(":notification"))
+    implementation(project(":user"))
     implementation(project(":shared"))
 
     implementation("org.flywaydb:flyway-core")

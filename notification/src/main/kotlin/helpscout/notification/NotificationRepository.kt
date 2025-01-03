@@ -1,7 +1,7 @@
 package helpscout.notification
 
-import org.springframework.data.repository.CrudRepository
+import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface NotificationRepository : CrudRepository<NotificationEntity, Long>
+interface NotificationRepository : JpaRepository<NotificationEntity, Long>

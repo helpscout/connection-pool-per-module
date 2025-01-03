@@ -1,64 +1,69 @@
-# Connection Pool per Module - PoC
+# Connection Pool per Module
 
-This PoC demonstrates how to isolate connection pools per module by using a custom `AbstractRoutingDataSource` that
-enables choosing a data source per both `module` and `type` (`reading|writing`) at runtime.
+This sample demonstrates how to isolate connection pools per module using a custom `AbstractRoutingDataSource`. This allows choosing a data source per `module` at runtime.
 
-The implementation reuses Core-API `@ReadingController` / `@WritingController` stereotypes along with the interceptor to route to
-the appropriate data source based on the request type and the package the request comes from, e.g.:
+## Implementation
 
-| package                  | type    | pool                   |
-|--------------------------|---------|------------------------|
-| `helpscout.conversation` | reading | `conversation_reading` |
-|                          | writing | `conversation_writing` |
-| `helpscout.mailbox`      | reading | `mailbox_reading`      |
-|                          | writing | `mailbox_writing`      |
+The implementation uses Spring's `@RestController` stereotype along with an interceptor to route to the appropriate data source based on the package the request comes from:
 
-The data source settings are defined in `application.yml` and are loaded into custom `DataSourceProperties` beans to allow having a structure like:
+| Package                  | Pool                |
+|--------------------------|---------------------|
+| `helpscout.notification` | `notification_pool` |
+| `helpscout.user`         | `user_pool`         |
+| else                     | `default_pool`      |
+
+### Data Source Settings
+
+The data source settings are defined in `application.yml` and are loaded into a custom `ModuleDataSourceProperties` bean to allow having a structure like:
 
 ```yaml
 spring:
   datasource:
-    reading:
-      url: jdbc:mysql://localhost:3306/helpscout
-      username: test
-      password: test
-      hikari:
-        connection-timeout: 20000
-        max-lifetime: 300000
-    writing:
-      ...
+    url: jdbc:mysql://localhost:3306/helpscout
+    password: test
+    username: test
+    hikari:
+      connection-timeout: 20000
+      max-lifetime: 300000
     instances:
-      - name: conversation_reading
+      - name: default_pool
         pool-size: 10
-      - name: conversation_writing
-        pool-size: 5
-      - name: mailbox_reading
-        pool-size: 8
-      - name: mailbox_writing
-        pool-size: 4
+      - name: notification_pool
+        pool-size: 10
+      - name: user_pool
+        pool-size: 10
 ```
 
-## Quick start
+## Quick Start
 
-The docker-compose file starts a MySQL database along with the Flyway scripts that create the two tables the demo + the tests need. 
+1. Start the MySQL database and Flyway scripts using Docker Compose:
 
-To build and start the project, run `docker compose up` and then:
+    ```bash
+    docker compose up
+    ```
 
-```bash
-./gradlew clean build
-./gradlew bootRun
+2. Build and start the project:
+
+    ```bash
+    ./gradlew clean build
+    ./gradlew bootRun
+    ```
+
+## Endpoints
+
+This demo provides the following endpoints:
+
+- `GET http://localhost:8080/v1/notifications`
+- `GET http://localhost:8080/v1/notifications/{id}`
+- `GET http://localhost:8080/v1/users`
+- `GET http://localhost:8080/v1/users/{id}`
+
+Depending on the endpoint you hit, you may see the following message in the console:
+
+```
+Routing datasource to {current}_pool
 ```
 
-This demo comes with four endpoints:
-- `POST http://localhost:8080/v1/conversations`
-- `GET http://localhost:8080/v1/conversations`
-- `POST http://localhost:8080/v1/mailboxes`
-- `GET http://localhost:8080/v1/mailboxes`
+## Integration Tests
 
-You may find the following message in the console depending on the endpoint you hit:
-
-```
-Routing datasource to mailbox_reading
-```
-
-There are also two integration tests that demonstrate how the routing works.
+A few integration tests are available to validate that the routing works correctly.

@@ -6,9 +6,7 @@ import org.springframework.web.bind.annotation.RestController
 import java.util.*
 
 @RestController
-class NotificationController(
-    val repository: NotificationRepository
-) {
+class NotificationController(val repository: NotificationRepository) {
 
     @GetMapping("/v1/notifications")
     fun listNotification(): Iterable<NotificationEntity> = repository.findAll()
