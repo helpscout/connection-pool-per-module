@@ -4,19 +4,18 @@ import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import helpscout.shared.config.ModuleDataSourceProperties.InstanceProperties
 import helpscout.shared.config.ModuleName.DEFAULT
-import jakarta.persistence.EntityManagerFactory
+import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
-import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean
-import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter
 import javax.sql.DataSource
 import kotlin.properties.Delegates.notNull
 
 @Configuration
+@EntityScan("helpscout")
 @EnableConfigurationProperties(ModuleDataSourceProperties::class)
 class SpringDataJpaConfiguration {
 
@@ -38,19 +37,10 @@ class SpringDataJpaConfiguration {
             maxLifetime = hikari.maxLifetime
         }
 
-    @Bean
-    fun entityManagerFactory(dataSource: DataSource): EntityManagerFactory =
-        LocalContainerEntityManagerFactoryBean().apply {
-            this.dataSource = dataSource
-            this.jpaVendorAdapter = HibernateJpaVendorAdapter()
-            this.setPackagesToScan("helpscout")
-            this.afterPropertiesSet()
-        }.`object`!!
-
     private fun createRoutingDataSource(targetDataSources: Map<ModuleName, DataSource>) =
         ModuleRoutingDataSource().apply {
             setTargetDataSources(targetDataSources.toMap())
-            setDefaultTargetDataSource(targetDataSources[DEFAULT]!!)
+            setDefaultTargetDataSource(targetDataSources.getValue(DEFAULT))
         }
 }
 
